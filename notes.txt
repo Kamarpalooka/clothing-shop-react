@@ -1,0 +1,3 @@
+*Functional Component - For not holding any state
+
+*Class base Component - For holding / store state values
