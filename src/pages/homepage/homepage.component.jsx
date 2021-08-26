@@ -8,6 +8,6 @@ import './homepage.styles.scss';
     <div className='homepage'>
         <Directory />
     </div>
-) 
+); 
 
 export default HomePage;

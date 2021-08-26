@@ -1,3 +1,16 @@
 *Functional Component - For not holding any state
 
 *Class base Component - For holding / store state values
+
+*React Router DOM -
+    npm install react-router-dom
+    yarn add react-router-dom
+    
+    [withRouter] - gives a component direct access to location, match and history props of that component
+
+
+
+
+
+------------------------------------ ES6 ---------------------------------
+*ES6 [otherSectionProps] - allow us to pass data from array, json ect w/ hard coding it
