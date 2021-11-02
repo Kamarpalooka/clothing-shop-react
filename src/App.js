@@ -8,7 +8,7 @@ import Header from './components/header/header.component';
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import AuthPage from './pages/authpage/authpage.component';
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 
 class  App  extends React.Component {
@@ -27,17 +27,32 @@ class  App  extends React.Component {
 
   componentDidMount(){
 
-    // open state from google auth
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user });
+    // check user state from google auth
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
 
-      console.log(user);
+      // get userdata & set it to our appstate
+      if(userAuth){
+        const userRef = await createUserProfileDocument(userAuth);
+
+        userRef.onSnapshot( snapShot => {
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data()
+            }
+          });
+
+          console.log(this.state);
+        });
+      }
+
+      // set appstate to null that we get from userAuth if user data does not exist
+      this.setState({currentUser: userAuth})
     })
   } 
 
 
   componentWillUnmount(){
-
     // close user authenticated state to prevent memory leaks
     this.unsubscribeFromAuth();
   }

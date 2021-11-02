@@ -13,6 +13,36 @@ const config = {
     measurementId: "G-EKPTD9SE41"
 };
 
+
+// creating / inserting user into google firestore db
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+    if(!userAuth) return;
+
+    const userRef = firestore.doc(`users/${userAuth.uid}`);
+
+    const snapShot = await userRef.get();
+
+    if(!snapShot.exists){
+        const { displayName, email } = userAuth;
+        const createdAt = Date();
+
+        try{
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            })
+        }
+        catch(error){
+            console.log('error creating the user', error.message);
+        }
+    }
+    
+    return userRef;
+};
+
+
 firebase.initializeApp(config)
   
 export const auth = firebase.auth();
@@ -26,5 +56,5 @@ provider.setCustomParameters({prompt: 'select_account'});
 export const signInWithGoogle =  () => auth.signInWithPopup(provider);
 
 
-// [export defautl firebase library incase we need the whole thing]
+// [export default firebase library in case we need the whole thing]
 export default firebase;
