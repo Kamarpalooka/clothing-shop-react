@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import {connect} from "react-redux";
 
 import './App.css';
 
@@ -9,23 +10,17 @@ import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import AuthPage from './pages/authpage/authpage.component';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import {setCurrentUser} from "./redux/user/user-actions";
 
 
 class  App  extends React.Component {
-  constructor(){
-    super();
-
-    this.state = {
-      currentUser: null
-    }
-  }
-
   // property to close auth state when user logs off
   unsubscribeFromAuth = null;
 
 
-
   componentDidMount(){
+    // a var/prop to hold and set a user state in redux
+    const {setCurrentUser} = this.props;
 
     // check user state from google auth
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
@@ -35,7 +30,7 @@ class  App  extends React.Component {
         const userRef = await createUserProfileDocument(userAuth);
 
         userRef.onSnapshot( snapShot => {
-          this.setState({
+          setCurrentUser({
             currentUser: {
               id: snapShot.id,
               ...snapShot.data()
@@ -47,7 +42,7 @@ class  App  extends React.Component {
       }
 
       // set appstate to null that we get from userAuth if user data does not exist
-      this.setState({currentUser: userAuth})
+      setCurrentUser(userAuth)
     })
   } 
 
@@ -58,12 +53,11 @@ class  App  extends React.Component {
   }
 
 
-
   render(){
     return (
       <div>
         <Router>
-          <Header currentUser={this.state.currentUser} />
+          <Header />
           <Switch>
             <Route exact path='/' component={HomePage} />
             <Route path='/shop' component={ShopPage} />
@@ -75,4 +69,12 @@ class  App  extends React.Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  // trigger user action from redux
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+})
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(App);
