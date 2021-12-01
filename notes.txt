@@ -9,8 +9,9 @@
     [withRouter] - gives a component direct access to location, match and history props of that component
 
 
-
-
-
 ------------------------------------ ES6 ---------------------------------
 *ES6 [otherSectionProps] - allow us to pass data from array, json ect w/ hard coding it
+
+
+mapDispatchToProps = For setting/triggering states in redux
+mapStateToProps = For accessing states in redux (root reducer)

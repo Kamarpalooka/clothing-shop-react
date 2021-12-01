@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom'
 import {connect} from "react-redux";
 
 import './App.css';
@@ -36,12 +36,10 @@ class  App  extends React.Component {
               ...snapShot.data()
             }
           });
-
-          console.log(this.state);
         });
       }
 
-      // set appstate to null that we get from userAuth if user data does not exist
+      // set state to null that we get from userAuth if user data does not exist
       setCurrentUser(userAuth)
     })
   } 
@@ -61,7 +59,14 @@ class  App  extends React.Component {
           <Switch>
             <Route exact path='/' component={HomePage} />
             <Route path='/shop' component={ShopPage} />
-            <Route path='/auth' component={AuthPage} />
+            <Route
+                exact
+                path='/auth'
+                render={()  => this.props.currentUser
+                    ? (<Redirect to='/' />)
+                    : (<AuthPage />)
+                }
+            />
           </Switch>
           </Router>  
       </div>
@@ -69,12 +74,16 @@ class  App  extends React.Component {
   }
 }
 
+const mapStateToProps = ({user}) => ({
+  currentUser: user.currentUser
+})
+
 const mapDispatchToProps = dispatch => ({
-  // trigger user action from redux
+  // trigger and set user state with user action from redux
   setCurrentUser: user => dispatch(setCurrentUser(user))
 })
 
 export default connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(App);
